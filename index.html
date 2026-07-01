@@ -3,158 +3,410 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Nexus Select Trust Ticker</title>
+<title>Nexus Select Trust Terminal</title>
 <style>
-  body {
-    font-family: monospace;
-    background-color: #0a0a0a;
-    color: #fff;
+  * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: 'Courier New', Courier, monospace;
+  }
+  body {
+    background-color: #080c0e;
+    color: #d1dadf;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    padding: 20px;
+    background-image: 
+      radial-gradient(at 50% 0%, rgba(0, 255, 102, 0.03) 0px, transparent 50%),
+      linear-gradient(rgba(18, 24, 27, 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(18, 24, 27, 0.4) 1px, transparent 1px);
+    background-size: 100% 100%, 20px 20px, 20px 20px;
   }
-  .ticker-container {
-    background-color: #111;
-    border: 1px solid #222;
-    padding: 40px;
-    border-radius: 16px;
+  .terminal-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
     width: 100%;
-    max-width: 450px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    max-width: 1100px;
   }
-  .label {
+  @media (min-width: 768px) {
+    .terminal-grid {
+      grid-template-columns: 320px 1fr;
+    }
+  }
+  .card {
+    background: linear-gradient(135deg, #101619 0%, #0b0f11 100%);
+    border: 1px solid #1a2429;
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #1a2429, transparent);
+  }
+  .main-display {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .brand-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid #1a2429;
+    padding-bottom: 15px;
+  }
+  .brand-logo {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #00ff66;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #00ff66;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0,255,102,0.2);
+  }
+  .brand-title h1 {
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .brand-title p {
+    font-size: 11px;
+    color: #5f757e;
+  }
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #141b1f;
+  }
+  .metric-row:last-child {
+    border-bottom: none;
+  }
+  .metric-label {
+    font-size: 13px;
+    color: #7fa1b0;
+  }
+  .metric-value {
     font-size: 14px;
+    color: #fff;
+    font-weight: bold;
+  }
+  .ticker-box {
+    text-align: center;
+    padding: 30px 20px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    border: 1px solid #131b1e;
+  }
+  .ticker-label {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #5f757e;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #888;
     margin-bottom: 10px;
   }
-  .live-value {
-    font-size: 42px;
+  .live-amount {
+    font-size: 46px;
     font-weight: bold;
     color: #00ff66;
-    text-shadow: 0 0 20px rgba(0,255,102,0.3);
-    margin-bottom: 30px;
+    text-shadow: 0 0 25px rgba(0,255,102,0.3);
     font-variant-numeric: tabular-nums;
+    letter-spacing: -1px;
   }
-  .control-panel {
-    background-color: #161616;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #252525;
+  .ticker-sub {
+    font-size: 11px;
+    color: #435861;
+    margin-top: 10px;
   }
-  .input-wrapper {
-    margin-bottom: 15px;
+  .chart-wrapper {
+    height: 180px;
+    position: relative;
+    margin-top: 10px;
   }
-  input {
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .controls-panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    align-items: center;
+    margin-top: 10px;
+  }
+  @media (min-width: 600px) {
+    .controls-panel {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+  .input-container {
+    position: relative;
+  }
+  .input-container span {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #5f757e;
+  }
+  .control-input {
     width: 100%;
-    padding: 12px;
-    background-color: #222;
-    border: 1px solid #333;
+    padding: 14px 14px 14px 28px;
+    background-color: #0a0e10;
+    border: 1px solid #1a2429;
     color: #fff;
-    border-radius: 6px;
-    box-sizing: border-box;
-    font-family: monospace;
+    border-radius: 8px;
     font-size: 16px;
-    text-align: center;
+    font-family: monospace;
   }
-  input:focus {
+  .control-input:focus {
     outline: none;
     border-color: #00ff66;
   }
-  .btn-group {
-    display: flex;
-    gap: 10px;
-  }
-  button {
-    flex: 1;
-    padding: 12px;
+  .btn {
+    padding: 14px;
     border: none;
-    border-radius: 6px;
-    font-family: monospace;
-    font-size: 16px;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
   }
   .btn-add {
-    background-color: #00ff66;
-    color: #000;
+    background: rgba(0, 255, 102, 0.06);
+    border: 1px solid #00ff66;
+    color: #00ff66;
+    box-shadow: inset 0 0 10px rgba(0,255,102,0.05);
   }
   .btn-add:hover {
-    background-color: #00dd55;
+    background: #00ff66;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0,255,102,0.3);
   }
   .btn-less {
-    background-color: #ff3333;
-    color: #fff;
+    background: rgba(255, 51, 51, 0.06);
+    border: 1px solid #ff3333;
+    color: #ff3333;
+    box-shadow: inset 0 0 10px rgba(255,51,51,0.05);
   }
   .btn-less:hover {
-    background-color: #dd2222;
+    background: #ff3333;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255,51,51,0.3);
+  }
+  .system-status {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #435861;
+    border-top: 1px solid #141b1f;
+    padding-top: 15px;
+    margin-top: 10px;
+  }
+  .status-online {
+    color: #00ff66;
   }
 </style>
 </head>
 <body>
 
-<div class="ticker-container">
-  <div class="label">Live Investment Value (10%/yr)</div>
-  <div class="live-value" id="counter">₹0.000000</div>
-  
-  <div class="control-panel">
-    <div class="input-wrapper">
-      <input type="number" id="amount" placeholder="Enter Amount (₹)" value="1000">
+<div class="terminal-grid">
+  <div class="card">
+    <div class="brand-header">
+      <div class="brand-logo">&#10064;</div>
+      <div class="brand-title">
+        <h1>Nexus Select</h1>
+        <p>Portfolio Terminal v2.4</p>
+      </div>
     </div>
-    <div class="btn-group">
-      <button class="btn-add" onclick="modifyInvestment(true)">+ Add</button>
-      <button class="btn-less" onclick="modifyInvestment(false)">- Less</button>
+    <div style="margin-top: 15px;">
+      <div class="metric-row">
+        <div class="metric-label">Units Owned</div>
+        <div class="metric-value">29</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">Avg Purchase Price</div>
+        <div class="metric-value">&#x20B9;163.00</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">Base Cost Basis</div>
+        <div class="metric-value">&#x20B9;4,727.00</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">Annual Dividend Yield</div>
+        <div class="metric-value">~5.6%</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">Compounding Baseline</div>
+        <div class="metric-value">10.00% / yr</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-display">
+    <div class="card">
+      <div class="ticker-box">
+        <div class="ticker-label">Live Investment Value</div>
+        <div class="live-amount" id="live-ticker">&#x20B9;0.000000</div>
+        <div class="ticker-sub">Total Projected Portfolio Value (Real-Time Compounding)</div>
+      </div>
+
+      <div class="chart-wrapper">
+        <canvas id="liveChart"></canvas>
+      </div>
+
+      <div class="controls-panel">
+        <div class="input-container">
+          <span>&#x20B9;</span>
+          <input type="number" id="modAmount" class="control-input" placeholder="1000" value="1000">
+        </div>
+        <button class="btn btn-add" onclick="adjustBalance(true)">+ Add Asset</button>
+        <button class="btn btn-less" onclick="adjustBalance(false)">- Less Asset</button>
+      </div>
+
+      <div class="system-status">
+        <div>System: <span class="status-online">ONLINE</span></div>
+        <div>Latency: 12ms</div>
+        <div id="timestamp">Updated: Live</div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  const initialUnits = 29;
-  const initialPrice = 163;
-  let currentPrincipal = localStorage.getItem('nexus_principal') 
-    ? parseFloat(localStorage.getItem('nexus_principal')) 
-    : initialUnits * initialPrice;
+  const baseUnits = 29;
+  const basePrice = 163;
+  let currentBalance = localStorage.getItem('nexus_live_balance')
+    ? parseFloat(localStorage.getItem('nexus_live_balance'))
+    : baseUnits * basePrice;
 
   const annualRate = 0.10;
   const msPerYear = 365 * 24 * 60 * 60 * 1000;
-  let lastUpdateTime = Date.now();
+  let lastTime = Date.now();
 
-  function updateTicker() {
+  const canvas = document.getElementById('liveChart');
+  const ctx = canvas.getContext('2d');
+  let dataPoints = Array(40).fill(currentBalance);
+
+  function resizeCanvas() {
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function drawChart() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.strokeStyle = 'rgba(26, 36, 41, 0.4)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < canvas.width; i += 40) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, canvas.height);
+      ctx.stroke();
+    }
+    for (let i = 0; i < canvas.height; i += 30) {
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(canvas.width, i);
+      ctx.stroke();
+    }
+
+    let min = Math.min(...dataPoints);
+    let max = Math.max(...dataPoints);
+    if (min === max) { min -= 10; max += 10; }
+    let pad = (max - min) * 0.1;
+    min -= pad; max += pad;
+
+    ctx.beginPath();
+    for (let i = 0; i < dataPoints.length; i++) {
+      let x = (i / (dataPoints.length - 1)) * canvas.width;
+      let y = canvas.height - ((dataPoints[i] - min) / (max - min)) * canvas.height;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = '#00ff66';
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#00ff66';
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    let lastX = canvas.width;
+    let lastY = canvas.height - ((dataPoints[dataPoints.length - 1] - min) / (max - min)) * canvas.height;
+    ctx.beginPath();
+    ctx.arc(lastX - 2, lastY, 4, 0, 2 * Math.PI);
+    ctx.fillStyle = '#00ff66';
+    ctx.fill();
+  }
+
+  function tick() {
     const now = Date.now();
-    const elapsedMs = now - lastUpdateTime;
-    lastUpdateTime = now;
+    const elapsed = now - lastTime;
+    lastTime = now;
 
     const ratePerMs = annualRate / msPerYear;
-    currentPrincipal = currentPrincipal * Math.exp(ratePerMs * elapsedMs);
-    
-    localStorage.setItem('nexus_principal', currentPrincipal);
-    document.getElementById('counter').innerText = '₹' + currentPrincipal.toFixed(6);
+    currentBalance = currentBalance * Math.exp(ratePerMs * elapsed);
+
+    localStorage.setItem('nexus_live_balance', currentBalance);
+    document.getElementById('live-ticker').innerText = '&#x20B9;' + currentBalance.toFixed(6);
+
+    const d = new Date();
+    document.getElementById('timestamp').innerText = `Updated: ${d.toLocaleTimeString()}`;
   }
 
-  function modifyInvestment(isAddition) {
-    const inputElement = document.getElementById('amount');
-    const value = parseFloat(inputElement.value) || 0;
-    
-    if (isAddition) {
-      currentPrincipal += value;
+  function adjustBalance(isAdding) {
+    const input = document.getElementById('modAmount');
+    const val = parseFloat(input.value) || 0;
+
+    if (isAdding) {
+      currentBalance += val;
     } else {
-      currentPrincipal -= value;
-      if (currentPrincipal < 0) currentPrincipal = 0;
+      currentBalance -= val;
+      if (currentBalance < 0) currentBalance = 0;
     }
+
+    localStorage.setItem('nexus_live_balance', currentBalance);
+    lastTime = Date.now();
+    document.getElementById('live-ticker').innerText = '&#x20B9;' + currentBalance.toFixed(6);
     
-    localStorage.setItem('nexus_principal', currentPrincipal);
-    lastUpdateTime = Date.now();
-    document.getElementById('counter').innerText = '₹' + currentPrincipal.toFixed(6);
-    inputElement.value = '';
+    dataPoints.push(currentBalance);
+    dataPoints.shift();
+    drawChart();
   }
 
-  setInterval(updateTicker, 50);
+  setInterval(tick, 50);
+  
+  setInterval(() => {
+    dataPoints.push(currentBalance);
+    dataPoints.shift();
+    drawChart();
+  }, 1000);
+
+  setTimeout(drawChart, 200);
 </script>
 
 </body>
