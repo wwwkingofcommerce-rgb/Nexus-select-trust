@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Select Trust Tracker</title>
+<style>
+  body {
+    font-family: monospace;
+    background-color: #121212;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .app-container {
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+  }
+  h2 {
+    text-align: center;
+    color: #4CAF50;
+    margin-top: 0;
+  }
+  .input-group {
+    margin-bottom: 15px;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  input {
+    width: 100%;
+    padding: 10px;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: monospace;
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: monospace;
+    margin-top: 10px;
+  }
+  button:hover {
+    background-color: #45a049;
+  }
+  .results-card {
+    margin-top: 25px;
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 5px solid #4CAF50;
+  }
+  .results-card div {
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+  table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+  }
+  th {
+    color: #4CAF50;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <h2>Nexus Select Trust Tracker</h2>
+  
+  <div class="input-group">
+    <label>Current Units Owned</label>
+    <input type="number" id="units" value="29">
+  </div>
+  
+  <div class="input-group">
+    <label>Current Price Per Unit (₹)</label>
+    <input type="number" id="price" value="163">
+  </div>
+  
+  <div class="input-group">
+    <label>Additional Annual Investment (₹)</label>
+    <input type="number" id="additional" value="0">
+  </div>
+  
+  <div class="input-group">
+    <label>Years to Project</label>
+    <input type="number" id="years" value="10">
+  </div>
+  
+  <button onclick="calculateGrowth()">Calculate 10% Growth</button>
+
+  <div class="results-card" id="summary-box" style="display:none;"></div>
+  
+  <table id="growth-table" style="display:none;">
+    <thead>
+      <tr>
+        <th>Year</th>
+        <th>Total Invested</th>
+        <th>Value (@10%)</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+</div>
+
+<script>
+  function calculateGrowth() {
+    const units = parseFloat(document.getElementById('units').value) || 0;
+    const price = parseFloat(document.getElementById('price').value) || 0;
+    const additional = parseFloat(document.getElementById('additional').value) || 0;
+    const years = parseInt(document.getElementById('years').value) || 0;
+    const rate = 0.10;
+
+    let initialCapital = units * price;
+    let currentCapital = initialCapital;
+    let totalInvested = initialCapital;
+    
+    const summaryBox = document.getElementById('summary-box');
+    const growthTable = document.getElementById('growth-table');
+    const tableBody = document.getElementById('table-body');
+    
+    tableBody.innerHTML = '';
+    
+    for (let i = 1; i <= years; i++) {
+      currentCapital = (currentCapital + additional) * (1 + rate);
+      totalInvested += additional;
+      
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${i}</td>
+        <td>₹${Math.round(totalInvested).toLocaleString('en-IN')}</td>
+        <td>₹${Math.round(currentCapital).toLocaleString('en-IN')}</td>
+      `;
+      tableBody.appendChild(row);
+    }
+    
+    summaryBox.innerHTML = `
+      <div><strong>Initial Base:</strong> ₹${Math.round(initialCapital).toLocaleString('en-IN')}</div>
+      <div><strong>Total Out of Pocket:</strong> ₹${Math.round(totalInvested).toLocaleString('en-IN')}</div>
+      <div style="font-size: 18px; margin-top: 15px; color: #4CAF50;"><strong>Final Value: ₹${Math.round(currentCapital).toLocaleString('en-IN')}</strong></div>
+    `;
+    
+    summaryBox.style.display = 'block';
+    growthTable.style.display = 'table';
+  }
+
+  window.onload = calculateGrowth;
+</script>
+
+</body>
+</html>
