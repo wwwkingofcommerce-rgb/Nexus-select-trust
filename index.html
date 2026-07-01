@@ -3,410 +3,390 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nexus Select Trust Terminal</title>
+<title>Nexus Select Trust - Portfolio Management Analytics</title>
 <style>
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   body {
-    background-color: #080c0e;
-    color: #d1dadf;
+    background-color: #0b0f19;
+    color: #f1f5f9;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 24px;
     background-image: 
-      radial-gradient(at 50% 0%, rgba(0, 255, 102, 0.03) 0px, transparent 50%),
-      linear-gradient(rgba(18, 24, 27, 0.4) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(18, 24, 27, 0.4) 1px, transparent 1px);
-    background-size: 100% 100%, 20px 20px, 20px 20px;
+      radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.05) 0%, transparent 60%),
+      linear-gradient(rgba(255, 255, 255, 0.003) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.003) 1px, transparent 1px);
+    background-size: 100% 100%, 30px 30px, 30px 30px;
   }
-  .terminal-grid {
+  .dashboard-container {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 24px;
     width: 100%;
-    max-width: 1100px;
+    max-width: 1150px;
   }
-  @media (min-width: 768px) {
-    .terminal-grid {
-      grid-template-columns: 320px 1fr;
+  @media (min-width: 850px) {
+    .dashboard-container {
+      grid-template-columns: 340px 1fr;
     }
   }
-  .card {
-    background: linear-gradient(135deg, #101619 0%, #0b0f11 100%);
-    border: 1px solid #1a2429;
+  .panel {
+    background-color: #111827;
+    border: 1px solid #1f2937;
     border-radius: 12px;
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    padding: 28px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #1a2429, transparent);
+  .brand-section {
+    border-bottom: 1px solid #1f2937;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
   }
-  .main-display {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  .brand-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.5px;
   }
-  .brand-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    border-bottom: 1px solid #1a2429;
-    padding-bottom: 15px;
+  .brand-subtitle {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 4px;
   }
-  .brand-logo {
-    width: 40px;
-    height: 40px;
-    border: 2px solid #00ff66;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #00ff66;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(0,255,102,0.2);
-  }
-  .brand-title h1 {
-    font-size: 18px;
-    letter-spacing: 1px;
-    color: #fff;
-  }
-  .brand-title p {
-    font-size: 11px;
-    color: #5f757e;
-  }
-  .metric-row {
+  .metric-tile {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #141b1f;
+    padding: 14px 0;
+    border-bottom: 1px solid #1f2937;
   }
-  .metric-row:last-child {
+  .metric-tile:last-child {
     border-bottom: none;
   }
   .metric-label {
-    font-size: 13px;
-    color: #7fa1b0;
+    font-size: 14px;
+    color: #9ca3af;
   }
   .metric-value {
-    font-size: 14px;
-    color: #fff;
-    font-weight: bold;
+    font-size: 15px;
+    color: #f3f4f6;
+    font-weight: 600;
   }
-  .ticker-box {
+  .analytics-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .valuation-box {
     text-align: center;
-    padding: 30px 20px;
-    background: rgba(0,0,0,0.2);
+    padding: 32px 24px;
+    background-color: #1f2937;
     border-radius: 8px;
-    border: 1px solid #131b1e;
+    border: 1px solid #374151;
   }
-  .ticker-label {
-    font-size: 12px;
-    letter-spacing: 3px;
-    color: #5f757e;
+  .valuation-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #9ca3af;
     text-transform: uppercase;
-    margin-bottom: 10px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
   }
-  .live-amount {
-    font-size: 46px;
-    font-weight: bold;
-    color: #00ff66;
-    text-shadow: 0 0 25px rgba(0,255,102,0.3);
-    font-variant-numeric: tabular-nums;
+  .valuation-amount {
+    font-size: 44px;
+    font-weight: 700;
+    color: #38bdf8;
     letter-spacing: -1px;
+    font-variant-numeric: tabular-nums;
   }
-  .ticker-sub {
-    font-size: 11px;
-    color: #435861;
-    margin-top: 10px;
+  .valuation-note {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 8px;
   }
-  .chart-wrapper {
-    height: 180px;
+  .chart-container {
+    height: 220px;
     position: relative;
-    margin-top: 10px;
+    margin: 12px 0;
   }
   canvas {
     width: 100% !important;
     height: 100% !important;
   }
-  .controls-panel {
+  .action-bar {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 15px;
-    align-items: center;
-    margin-top: 10px;
+    gap: 16px;
+    margin-top: 8px;
   }
   @media (min-width: 600px) {
-    .controls-panel {
-      grid-template-columns: 1fr 1fr 1fr;
+    .action-bar {
+      grid-template-columns: 1.5fr 1fr 1fr;
     }
   }
-  .input-container {
+  .input-group {
     position: relative;
   }
-  .input-container span {
+  .input-currency {
     position: absolute;
-    left: 12px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #5f757e;
+    color: #9ca3af;
+    font-weight: 500;
   }
-  .control-input {
+  .form-control {
     width: 100%;
-    padding: 14px 14px 14px 28px;
-    background-color: #0a0e10;
-    border: 1px solid #1a2429;
-    color: #fff;
+    padding: 14px 14px 14px 32px;
+    background-color: #0b0f19;
+    border: 1px solid #374151;
+    color: #ffffff;
     border-radius: 8px;
-    font-size: 16px;
-    font-family: monospace;
+    font-size: 15px;
+    font-weight: 500;
+    transition: border-color 0.15s ease;
   }
-  .control-input:focus {
+  .form-control:focus {
     outline: none;
-    border-color: #00ff66;
+    border-color: #38bdf8;
   }
   .btn {
     padding: 14px;
     border: none;
     border-radius: 8px;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+    transition: background-color 0.15s ease;
   }
-  .btn-add {
-    background: rgba(0, 255, 102, 0.06);
-    border: 1px solid #00ff66;
-    color: #00ff66;
-    box-shadow: inset 0 0 10px rgba(0,255,102,0.05);
+  .btn-primary {
+    background-color: #0284c7;
+    color: #ffffff;
   }
-  .btn-add:hover {
-    background: #00ff66;
-    color: #000;
-    box-shadow: 0 0 20px rgba(0,255,102,0.3);
+  .btn-primary:hover {
+    background-color: #0369a1;
   }
-  .btn-less {
-    background: rgba(255, 51, 51, 0.06);
-    border: 1px solid #ff3333;
-    color: #ff3333;
-    box-shadow: inset 0 0 10px rgba(255,51,51,0.05);
+  .btn-secondary {
+    background-color: #dc2626;
+    color: #ffffff;
   }
-  .btn-less:hover {
-    background: #ff3333;
-    color: #fff;
-    box-shadow: 0 0 20px rgba(255,51,51,0.3);
+  .btn-secondary:hover {
+    background-color: #b91c1c;
   }
-  .system-status {
+  .status-footer {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
-    color: #435861;
-    border-top: 1px solid #141b1f;
-    padding-top: 15px;
-    margin-top: 10px;
+    font-size: 12px;
+    color: #6b7280;
+    border-top: 1px solid #1f2937;
+    padding-top: 16px;
+    margin-top: 8px;
   }
-  .status-online {
-    color: #00ff66;
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #34d399;
+    font-weight: 500;
+  }
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background-color: #34d399;
+    border-radius: 50%;
   }
 </style>
 </head>
 <body>
 
-<div class="terminal-grid">
-  <div class="card">
-    <div class="brand-header">
-      <div class="brand-logo">&#10064;</div>
-      <div class="brand-title">
-        <h1>Nexus Select</h1>
-        <p>Portfolio Terminal v2.4</p>
-      </div>
+<div class="dashboard-container">
+  <div class="panel">
+    <div class="brand-section">
+      <div class="brand-title">Nexus Select Trust</div>
+      <div class="brand-subtitle">Asset Position Profile</div>
     </div>
-    <div style="margin-top: 15px;">
-      <div class="metric-row">
-        <div class="metric-label">Units Owned</div>
-        <div class="metric-value">29</div>
+    <div>
+      <div class="metric-tile">
+        <div class="metric-label">Holding Size</div>
+        <div class="metric-value">29 Units</div>
       </div>
-      <div class="metric-row">
-        <div class="metric-label">Avg Purchase Price</div>
+      <div class="metric-tile">
+        <div class="metric-label">Avg Acquisition Price</div>
         <div class="metric-value">&#x20B9;163.00</div>
       </div>
-      <div class="metric-row">
-        <div class="metric-label">Base Cost Basis</div>
+      <div class="metric-tile">
+        <div class="metric-label">Principal Allocated</div>
         <div class="metric-value">&#x20B9;4,727.00</div>
       </div>
-      <div class="metric-row">
-        <div class="metric-label">Annual Dividend Yield</div>
-        <div class="metric-value">~5.6%</div>
+      <div class="metric-tile">
+        <div class="metric-label">Indicative Dividend Yield</div>
+        <div class="metric-value">~5.60%</div>
       </div>
-      <div class="metric-row">
-        <div class="metric-label">Compounding Baseline</div>
-        <div class="metric-value">10.00% / yr</div>
+      <div class="metric-tile">
+        <div class="metric-label">Annualized Target Rate</div>
+        <div class="metric-value">10.00%</div>
       </div>
     </div>
   </div>
 
-  <div class="main-display">
-    <div class="card">
-      <div class="ticker-box">
-        <div class="ticker-label">Live Investment Value</div>
-        <div class="live-amount" id="live-ticker">&#x20B9;0.000000</div>
-        <div class="ticker-sub">Total Projected Portfolio Value (Real-Time Compounding)</div>
+  <div class="analytics-wrapper">
+    <div class="panel">
+      <div class="valuation-box">
+        <div class="valuation-label">Estimated Valuation (Live Continuous)</div>
+        <div class="valuation-amount" id="live-valuation">&#x20B9;0.000000</div>
+        <div class="valuation-note">Compounded real-time modeling based on a 10% annual progression baseline</div>
       </div>
 
-      <div class="chart-wrapper">
-        <canvas id="liveChart"></canvas>
+      <div class="chart-container">
+        <canvas id="analyticsChart"></canvas>
       </div>
 
-      <div class="controls-panel">
-        <div class="input-container">
-          <span>&#x20B9;</span>
-          <input type="number" id="modAmount" class="control-input" placeholder="1000" value="1000">
+      <div class="action-bar">
+        <div class="input-group">
+          <span class="input-currency">&#x20B9;</span>
+          <input type="number" id="transactionValue" class="form-control" placeholder="1000" value="1000">
         </div>
-        <button class="btn btn-add" onclick="adjustBalance(true)">+ Add Asset</button>
-        <button class="btn btn-less" onclick="adjustBalance(false)">- Less Asset</button>
+        <button class="btn btn-primary" onclick="processTransaction(true)">Allocate Capital</button>
+        <button class="btn btn-secondary" onclick="processTransaction(false)">Liquidate Capital</button>
       </div>
 
-      <div class="system-status">
-        <div>System: <span class="status-online">ONLINE</span></div>
-        <div>Latency: 12ms</div>
-        <div id="timestamp">Updated: Live</div>
+      <div class="status-footer">
+        <div>Engine Feed: <span class="badge">Active</span></div>
+        <div>Refresh Frequency: 20Hz</div>
+        <div id="clock-sync">Sync Time: --:--:--</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  const baseUnits = 29;
-  const basePrice = 163;
-  let currentBalance = localStorage.getItem('nexus_live_balance')
-    ? parseFloat(localStorage.getItem('nexus_live_balance'))
-    : baseUnits * basePrice;
+  const unitsCount = 29;
+  const entryPrice = 163;
+  let capitalPool = localStorage.getItem('nexus_corporate_balance')
+    ? parseFloat(localStorage.getItem('nexus_corporate_balance'))
+    : unitsCount * entryPrice;
 
-  const annualRate = 0.10;
-  const msPerYear = 365 * 24 * 60 * 60 * 1000;
-  let lastTime = Date.now();
+  const targetGrowthRate = 0.10;
+  const msInCalendarYear = 365 * 24 * 60 * 60 * 1000;
+  let chronologicalAnchor = Date.now();
 
-  const canvas = document.getElementById('liveChart');
-  const ctx = canvas.getContext('2d');
-  let dataPoints = Array(40).fill(currentBalance);
+  const canvasElement = document.getElementById('analyticsChart');
+  const renderingContext = canvasElement.getContext('2d');
+  let historicalMatrix = Array(50).fill(capitalPool);
 
-  function resizeCanvas() {
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
+  function synchronizeCanvasDimensions() {
+    canvasElement.width = canvasElement.parentElement.clientWidth;
+    canvasElement.height = canvasElement.parentElement.clientHeight;
   }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+  window.addEventListener('resize', synchronizeCanvasDimensions);
+  synchronizeCanvasDimensions();
 
-  function drawChart() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  function renderAnalyticsChart() {
+    renderingContext.clearRect(0, 0, canvasElement.width, canvasElement.height);
     
-    ctx.strokeStyle = 'rgba(26, 36, 41, 0.4)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < canvas.width; i += 40) {
-      ctx.beginPath();
-      ctx.moveTo(i, 0);
-      ctx.lineTo(i, canvas.height);
-      ctx.stroke();
+    renderingContext.strokeStyle = '#1f2937';
+    renderingContext.lineWidth = 1;
+    for (let i = 0; i < canvasElement.width; i += 50) {
+      renderingContext.beginPath();
+      renderingContext.moveTo(i, 0);
+      renderingContext.lineTo(i, canvasElement.height);
+      renderingContext.stroke();
     }
-    for (let i = 0; i < canvas.height; i += 30) {
-      ctx.beginPath();
-      ctx.moveTo(0, i);
-      ctx.lineTo(canvas.width, i);
-      ctx.stroke();
+    for (let i = 0; i < canvasElement.height; i += 40) {
+      renderingContext.beginPath();
+      renderingContext.moveTo(0, i);
+      renderingContext.lineTo(canvasElement.width, i);
+      renderingContext.stroke();
     }
 
-    let min = Math.min(...dataPoints);
-    let max = Math.max(...dataPoints);
-    if (min === max) { min -= 10; max += 10; }
-    let pad = (max - min) * 0.1;
-    min -= pad; max += pad;
+    let absoluteMin = Math.min(...historicalMatrix);
+    let absoluteMax = Math.max(...historicalMatrix);
+    if (absoluteMin === absoluteMax) { absoluteMin -= 20; absoluteMax += 20; }
+    let safetyBuffer = (absoluteMax - absoluteMin) * 0.15;
+    absoluteMin -= safetyBuffer; absoluteMax += safetyBuffer;
 
-    ctx.beginPath();
-    for (let i = 0; i < dataPoints.length; i++) {
-      let x = (i / (dataPoints.length - 1)) * canvas.width;
-      let y = canvas.height - ((dataPoints[i] - min) / (max - min)) * canvas.height;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+    let analyticalGradient = renderingContext.createLinearGradient(0, 0, 0, canvasElement.height);
+    analyticalGradient.addColorStop(0, 'rgba(14, 165, 233, 0.2)');
+    analyticalGradient.addColorStop(1, 'rgba(14, 165, 233, 0.0)');
+
+    renderingContext.beginPath();
+    for (let i = 0; i < historicalMatrix.length; i++) {
+      let coordinateX = (i / (historicalMatrix.length - 1)) * canvasElement.width;
+      let coordinateY = canvasElement.height - ((historicalMatrix[i] - absoluteMin) / (absoluteMax - absoluteMin)) * canvasElement.height;
+      if (i === 0) renderingContext.moveTo(coordinateX, coordinateY);
+      else renderingContext.lineTo(coordinateX, coordinateY);
     }
-    ctx.strokeStyle = '#00ff66';
-    ctx.lineWidth = 2;
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#00ff66';
-    ctx.stroke();
-    ctx.shadowBlur = 0;
+    renderingContext.strokeStyle = '#0ea5e9';
+    renderingContext.lineWidth = 2.5;
+    renderingContext.stroke();
 
-    let lastX = canvas.width;
-    let lastY = canvas.height - ((dataPoints[dataPoints.length - 1] - min) / (max - min)) * canvas.height;
-    ctx.beginPath();
-    ctx.arc(lastX - 2, lastY, 4, 0, 2 * Math.PI);
-    ctx.fillStyle = '#00ff66';
-    ctx.fill();
+    renderingContext.lineTo(canvasElement.width, canvasElement.height);
+    renderingContext.lineTo(0, canvasElement.height);
+    renderingContext.fillStyle = analyticalGradient;
+    renderingContext.fill();
+
+    let terminalX = canvasElement.width;
+    let terminalY = canvasElement.height - ((historicalMatrix[historicalMatrix.length - 1] - absoluteMin) / (absoluteMax - absoluteMin)) * canvasElement.height;
+    renderingContext.beginPath();
+    renderingContext.arc(terminalX - 3, terminalY, 5, 0, 2 * Math.PI);
+    renderingContext.fillStyle = '#38bdf8';
+    renderingContext.fill();
   }
 
-  function tick() {
-    const now = Date.now();
-    const elapsed = now - lastTime;
-    lastTime = now;
+  function continuousExecutionLoop() {
+    const timeSnapshot = Date.now();
+    const computationalDelta = timeSnapshot - chronologicalAnchor;
+    chronologicalAnchor = timeSnapshot;
 
-    const ratePerMs = annualRate / msPerYear;
-    currentBalance = currentBalance * Math.exp(ratePerMs * elapsed);
+    const rateCoefficient = targetGrowthRate / msInCalendarYear;
+    capitalPool = capitalPool * Math.exp(rateCoefficient * computationalDelta);
 
-    localStorage.setItem('nexus_live_balance', currentBalance);
-    document.getElementById('live-ticker').innerText = '&#x20B9;' + currentBalance.toFixed(6);
+    localStorage.setItem('nexus_corporate_balance', capitalPool);
+    document.getElementById('live-valuation').innerHTML = '&#x20B9;' + capitalPool.toFixed(6);
 
-    const d = new Date();
-    document.getElementById('timestamp').innerText = `Updated: ${d.toLocaleTimeString()}`;
+    const timeStringObject = new Date();
+    document.getElementById('clock-sync').innerText = `Sync Time: ${timeStringObject.toLocaleTimeString()}`;
   }
 
-  function adjustBalance(isAdding) {
-    const input = document.getElementById('modAmount');
-    const val = parseFloat(input.value) || 0;
+  function processTransaction(isAllocation) {
+    const interactionInput = document.getElementById('transactionValue');
+    const computedValue = parseFloat(interactionInput.value) || 0;
 
-    if (isAdding) {
-      currentBalance += val;
+    if (isAllocation) {
+      capitalPool += computedValue;
     } else {
-      currentBalance -= val;
-      if (currentBalance < 0) currentBalance = 0;
+      capitalPool -= computedValue;
+      if (capitalPool < 0) capitalPool = 0;
     }
 
-    localStorage.setItem('nexus_live_balance', currentBalance);
-    lastTime = Date.now();
-    document.getElementById('live-ticker').innerText = '&#x20B9;' + currentBalance.toFixed(6);
+    localStorage.setItem('nexus_corporate_balance', capitalPool);
+    chronologicalAnchor = Date.now();
+    document.getElementById('live-valuation').innerHTML = '&#x20B9;' + capitalPool.toFixed(6);
     
-    dataPoints.push(currentBalance);
-    dataPoints.shift();
-    drawChart();
+    historicalMatrix.push(capitalPool);
+    historicalMatrix.shift();
+    renderAnalyticsChart();
   }
 
-  setInterval(tick, 50);
+  setInterval(continuousExecutionLoop, 50);
   
   setInterval(() => {
-    dataPoints.push(currentBalance);
-    dataPoints.shift();
-    drawChart();
+    historicalMatrix.push(capitalPool);
+    historicalMatrix.shift();
+    renderAnalyticsChart();
   }, 1000);
 
-  setTimeout(drawChart, 200);
+  setTimeout(renderAnalyticsChart, 250);
 </script>
 
 </body>
